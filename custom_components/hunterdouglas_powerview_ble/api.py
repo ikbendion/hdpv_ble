@@ -173,6 +173,17 @@ CLOSED_POSITION: Final[int] = 0
 # checked there.
 KEEP_POSITION: Final[int] = 0x8000
 
+# The velocity byte is a linear percentage of full speed: 50 runs at about
+# half, 100 at full, and 100 is the top of the scale rather than a fraction of
+# a wider one. Measured on hardware; no vendor documentation describes it.
+#
+# Lowest velocity the shade acts on, and the slowest it runs. The fallback
+# below it is a cliff rather than a ramp: 10 crawls, 9 is full speed, because
+# anything under the floor is treated as the "no velocity given" that 0 means.
+# So 1-9 is a band of settings that read as slow and behave as fast, which is
+# why the entity snaps them up to this rather than leaving them selectable.
+MIN_VELOCITY: Final[int] = 10
+
 
 class ShadeMove(NamedTuple):
     """A movement request in device coordinates.
