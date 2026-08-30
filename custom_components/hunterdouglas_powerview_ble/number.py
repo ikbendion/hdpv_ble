@@ -9,6 +9,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import ConfigEntryType, async_setup_shade_platform
+from .api import MIN_VELOCITY
 from .const import DOMAIN, LOGGER
 from .coordinator import PVCoordinator
 
@@ -55,17 +56,32 @@ class PowerViewVelocity(
         """Return the current velocity value."""
         return self._coord.velocity
 
+    @staticmethod
+    def _usable(value: float) -> int:
+        """Round a requested velocity to one the shade will act on.
+
+        Anything between 1 and MIN_VELOCITY is snapped up to it: the shade
+        ignores that band and runs at its default speed, so leaving it
+        selectable offers nine settings indistinguishable from 0. Zero itself
+        is kept -- it is the wire's "no velocity given" sentinel rather than a
+        speed, and it is what an unconfigured shade sends.
+        """
+        velocity = int(value)
+        return velocity if velocity == 0 else max(velocity, MIN_VELOCITY)
+
     async def async_added_to_hass(self) -> None:
         """Restore last known velocity on startup."""
         await super().async_added_to_hass()
         last_data = await self.async_get_last_number_data()
         if last_data and last_data.native_value is not None:
-            self._coord.velocity = int(last_data.native_value)
+            # Restored through the same floor, so a value stored before it
+            # existed is corrected rather than carried forward.
+            self._coord.velocity = self._usable(last_data.native_value)
             LOGGER.debug(
                 "%s: restored velocity to %s", self._coord.name, self._coord.velocity
             )
 
     async def async_set_native_value(self, value: float) -> None:
         """Set the velocity value."""
-        self._coord.velocity = int(value)
+        self._coord.velocity = self._usable(value)
         self.async_write_ha_state()

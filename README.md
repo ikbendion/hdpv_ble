@@ -138,7 +138,7 @@ Platform | Entity | Notes
 `cover` | Shade | Position, and tilt where supported. 100% is open
 `cover` | Top rail / Bottom rail | Top-down/bottom-up shades only — one entity per rail
 `cover` | Combined / Front / Rear | Dual-fabric shades only — see [Dual-fabric shades](#dual-fabric-shades)
-`number` | Velocity | Movement speed, 0–100. Configuration entity
+`number` | Velocity | Movement speed, as a percentage of full speed: 10 is the slowest, 100 the fastest. 0 leaves it to the shade, which runs at full speed. Configuration entity
 `button` | Identify | Flashes the LED and beeps three times
 `sensor` | Battery | 100% (full), 50%, 20%, 0% (empty). Created for every shade — see [Known issues](#known-issues)
 `sensor` | Signal strength | BLE RSSI, in dBm. Diagnostic entity
