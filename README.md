@@ -104,7 +104,8 @@ are three ways to obtain it:
    [Adafruit QT Py ESP32-S3](https://www.adafruit.com/product/5426). Flash it,
    connect over serial, then add the shade `myPVcover` to your home in the
    PowerView app. The log prints `set shade key: \xx\xx...`. Copy it, then delete
-   the emulated shade from the app.
+   the emulated shade from the app. No hardware? The [Linux port](/emu/linux)
+   runs the same emulator directly on a Linux host's own Bluetooth adapter.
 2. **Extract it from a gateway.** [`scripts/extract_gateway3_homekey.py`](scripts/extract_gateway3_homekey.py)
    pulls the key from a working PowerView gateway.
 3. **Recover it from the app.** The key sits in the PowerView app's own database,
