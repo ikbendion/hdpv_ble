@@ -4,6 +4,9 @@ An ESP32 sketch that pretends to be a Hunter Douglas PowerView shade. Adopting
 it into your home with the PowerView app makes the app hand over the home key,
 which the emulator prints to the serial console.
 
+No ESP32 on hand? [`emu/linux`](../linux) runs the same emulator directly on a
+Linux host's own Bluetooth adapter through BlueZ.
+
 This is the only way to obtain a home key without a G3 gateway. If you have a
 gateway, [`scripts/extract_gateway3_homekey.py`](../scripts/extract_gateway3_homekey.py)
 is easier. See [Getting the home key](../README.md#getting-the-home-key) in the
