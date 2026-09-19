@@ -177,22 +177,25 @@ class ShadeProtocol:
         if command == 0xFB02:
             return self._set_shade_key(data_dec, data_raw, data_len)
         if command == 0xFF77:
-            year = data_dec[4] | (data_dec[5] << 8)
+            b = body[:7].ljust(7, b"\x00")
+            year = b[0] | (b[1] << 8)
             LOGGER.info(
                 "set time: %d-%d-%d %d:%d:%d",
-                year, data_dec[6], data_dec[7], data_dec[8], data_dec[9], data_dec[10],
+                year, b[2], b[3], b[4], b[5], b[6],
             )
             return self._set_response(data_dec)
         if command == 0xFF87:
+            b = body[:6].ljust(6, b"\x00")
             LOGGER.info(
                 "set sunrise %d:%d:%d, sunset %d:%d:%d",
-                data_dec[4], data_dec[5], data_dec[6], data_dec[7], data_dec[8], data_dec[9],
+                b[0], b[1], b[2], b[3], b[4], b[5],
             )
             return self._set_response(data_dec)
         if command == 0xFFD7:
+            b = body[:2].ljust(2, b"\x00")
             LOGGER.info(
                 "set shade configuration: 0x%02X, status LED: %s",
-                data_dec[4], "on" if data_dec[5] else "off",
+                b[0], "on" if b[1] else "off",
             )
             return self._set_response(data_dec)
         if command == 0xFFDD:
@@ -382,13 +385,18 @@ def main() -> int:
     advertisement = build_advertisement(bus)
 
     mainloop = GLib.MainLoop()
+    registration_failed = False
 
     def register_app_error_cb(error: Exception) -> None:
+        nonlocal registration_failed
         LOGGER.error("failed to register GATT application: %s", error)
+        registration_failed = True
         mainloop.quit()
 
     def register_ad_error_cb(error: Exception) -> None:
+        nonlocal registration_failed
         LOGGER.error("failed to register advertisement: %s", error)
+        registration_failed = True
         mainloop.quit()
 
     service_manager.RegisterApplication(
@@ -417,7 +425,7 @@ def main() -> int:
         with contextlib.suppress(dbus.exceptions.DBusException):
             service_manager.UnregisterApplication(app.get_path())
 
-    return 0
+    return 1 if registration_failed else 0
 
 
 if __name__ == "__main__":

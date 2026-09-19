@@ -10,6 +10,7 @@ on any BlueZ-based distro).
 This module has no PowerView-specific knowledge; see shade_emulator.py
 for that.
 
+AUTHOR: BlueZ project authors (test/example-gatt-server, test/example-advertisement)
 LICENSE: GPLv2, see ../README.md
 """
 
@@ -49,13 +50,20 @@ def find_adapter(bus: dbus.Bus, manager_iface: str, preferred: str | None) -> st
     )
     objects = remote_om.GetManagedObjects()
 
+    adapter_seen = False
     for path, interfaces in objects.items():
-        if manager_iface not in interfaces:
+        if preferred is not None and not path.endswith("/" + preferred):
             continue
-        if preferred is None or path.endswith("/" + preferred):
+        if "org.bluez.Adapter1" in interfaces:
+            adapter_seen = True
+        if manager_iface in interfaces:
             return path
 
-    msg = f"no BlueZ adapter exposes {manager_iface}"
+    if preferred is not None and not adapter_seen:
+        msg = f"no such Bluetooth adapter: {preferred}"
+    else:
+        adapter = f" ({preferred})" if preferred else ""
+        msg = f"no BlueZ adapter{adapter} exposes {manager_iface}"
     raise RuntimeError(msg)
 
 

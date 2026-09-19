@@ -18,6 +18,12 @@ PowerView app.
 
 - A Linux host with a BLE-capable Bluetooth adapter and BlueZ ≥ 5.50
   (`bluetoothd` running; tested on BlueZ 5.72).
+- A Bluetooth 5.0+ adapter with LE Extended Advertising support. The
+  advertisement (flags, 128-bit service UUID, manufacturer data and local
+  name) comes to 45 bytes, over the 31-byte legacy advertising limit, so it
+  only fits under extended advertising — this is what the `btmon` hint below
+  is actually showing. A legacy-only 4.x adapter fails `RegisterAdvertisement`
+  outright.
 - `python3-dbus` and `python3-gi` (PyGObject) — install via your
   distro's package manager, e.g. `sudo apt install python3-dbus
   python3-gi`. These wrap system D-Bus/GLib libraries and generally
@@ -83,5 +89,8 @@ will see `myPVcover` normally.
 ## License
 
 **This directory is GPLv2, not Apache 2.0 like the rest of the
-repository** — same reasoning as [`../PV_BLE_cover`](../PV_BLE_cover):
-it's a derived work of `PV_BLE_cover.ino`. See [`../README.md`](../README.md#license).
+repository** — not because it links wolfSSL (this port doesn't), but
+because it's a derivative of [`../PV_BLE_cover`](../PV_BLE_cover)'s
+`PV_BLE_cover.ino` (`shade_emulator.py`) and of BlueZ's own GPLv2-licensed
+`test/example-gatt-server`/`test/example-advertisement` scripts
+(`ble_peripheral.py`). See [`../README.md`](../README.md#license).
