@@ -275,6 +275,7 @@ This fork has diverged substantially — the config-flow home key, hub support,
 the capability model, dual-rail shades and diagnostics are all new.
 
 Licensed under the Apache License 2.0. See [LICENSE](LICENSE). One exception:
-the ESP32 shade emulator in [`emu/`](emu/) is GPLv2, because it links wolfSSL.
+the shade emulator in [`emu/`](emu/) is GPLv2, as a derivative of the ESP32
+sketch (and, for the Linux port, of BlueZ's GPLv2-licensed example scripts).
 It is a development tool and is not part of the integration HACS installs — see
 [`emu/README.md`](emu/README.md).
